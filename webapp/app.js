@@ -7,7 +7,12 @@
 
   // Restore settings
   const storedWebhook = localStorage.getItem('webhookUrl') || '';
-  if (storedWebhook) webhookInput.value = storedWebhook;
+  if (storedWebhook) {
+    webhookInput.value = storedWebhook;
+  } else if (location.origin.includes('localhost:3000')) {
+    // When served by local proxy, default to /api/chat (bypass CORS)
+    webhookInput.value = '/api/chat';
+  }
 
   // Session
   const sessionKey = 'tua_session_id';
@@ -92,5 +97,7 @@
   });
 
   // Gợi ý ban đầu
-  appendMessage('bot', 'Xin chào, mình là TuaTua. Hãy nhập câu hỏi của bạn!');
+  appendMessage('bot', location.origin.includes('localhost:3000')
+    ? 'Xin chào! Đang chạy qua proxy. Hãy dùng URL mặc định /api/chat hoặc thay đổi ở trên.'
+    : 'Xin chào, mình là TuaTua. Hãy nhập câu hỏi của bạn!');
 })();
