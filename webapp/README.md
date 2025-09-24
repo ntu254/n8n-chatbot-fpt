@@ -2,7 +2,7 @@
 
 A minimal single-page web app to call your n8n chat webhook and display responses.
 
-## Setup
+## Option A — Direct call (same-origin or CORS enabled)
 
 1) Serve the `webapp` folder with any static server (examples):
 - Python: `python3 -m http.server -d webapp 8080`
@@ -19,20 +19,43 @@ A minimal single-page web app to call your n8n chat webhook and display response
 
 4) Start chatting.
 
+If you hit CORS errors with your n8n host, use Option B below.
+
+## Option B — Run local proxy (bypass CORS)
+
+1) Create a `.env` file in the `server/` folder based on `.env.example`:
+```
+PORT=3000
+N8N_WEBHOOK_URL=https://your-n8n-host/webhook/b1269f08-4273-48f6-bd24-178d1e8b9816
+N8N_AUTH_HEADER=Authorization
+N8N_AUTH_VALUE=Bearer YOUR_SUPER_SECRET_TOKEN
+CORS_ORIGIN=http://localhost:3000
+```
+- Use production `/webhook/` URL (avoid `/webhook-test/` for browsers).
+- Omit the auth keys if your webhook is public.
+
+2) Install deps and start server:
+```
+cd server
+npm i
+npm run dev
+```
+
+3) Open http://localhost:3000
+- The proxy serves the UI and forwards POST /api/chat → N8N_WEBHOOK_URL with proper headers.
+- In the UI’s “Webhook URL” field, enter: /api/chat
+
 ## Notes
 
 - The app stores:
   - The webhook URL in `localStorage.webhookUrl`.
   - A `sessionId` in `localStorage` (generated once) so your agent can maintain memory across turns.
-- If CORS is blocked by your n8n host, either:
-  - Enable CORS on your n8n server (recommended), or
-  - Host this page on the same origin as n8n, or
-  - Use a small reverse proxy to add CORS headers.
 
 ## Customization
 
 - Add authentication:
-  - In `webapp/app.js`, add an `Authorization` header if your webhook requires it.
+  - In `webapp/app.js`, add an `Authorization` header if calling n8n directly without proxy.
+  - Or set `N8N_AUTH_HEADER` and `N8N_AUTH_VALUE` in the proxy `.env`.
 - Styling:
   - Modify `webapp/styles.css`.
 - Message parsing:
