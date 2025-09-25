@@ -19,11 +19,13 @@ const N8N_AUTH_VALUE = process.env.N8N_AUTH_VALUE || '';   // e.g. "Bearer YOUR_
 // Middlewares
 app.use(express.json());
 
-// Simple CORS for local dev
+// CORS configuration
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || '*');
-  res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Max-Age', '86400'); // 24 hours
   if (req.method === 'OPTIONS') return res.sendStatus(200);
   next();
 });
