@@ -37,13 +37,13 @@
         body: JSON.stringify({ chatInput, sessionId })
       });
 
-      // Một số cấu hình n8n trả thẳng text, số khác trả JSON
+      // Xử lý response từ n8n webhook
       let respText = '';
       const contentType = res.headers.get('content-type') || '';
       if (contentType.includes('application/json')) {
         const data = await res.json();
-        // Thử các field phổ biến
-        respText = data?.data ?? data?.message ?? data?.result ?? JSON.stringify(data);
+        // Lấy text từ field output hoặc các field phổ biến khác
+        respText = data?.output ?? data?.data ?? data?.message ?? data?.result ?? JSON.stringify(data);
       } else {
         respText = await res.text();
       }
