@@ -1,13 +1,7 @@
 (function () {
-  const webhookInput = document.getElementById('webhookUrl');
-  const saveBtn = document.getElementById('saveSettings');
   const input = document.getElementById('input');
   const sendBtn = document.getElementById('send');
   const messages = document.getElementById('messages');
-
-  // Restore settings
-  const storedWebhook = localStorage.getItem('webhookUrl') || '';
-  if (storedWebhook) webhookInput.value = storedWebhook;
 
   // Session
   const sessionKey = 'tua_session_id';
@@ -26,12 +20,7 @@
   }
 
   async function sendMessage() {
-    const webhookUrl = webhookInput.value.trim();
     const chatInput = input.value.trim();
-    if (!webhookUrl) {
-      alert('Vui lòng nhập Webhook URL.');
-      return;
-    }
     if (!chatInput) return;
 
     appendMessage('user', chatInput);
@@ -40,12 +29,10 @@
     sendBtn.disabled = true;
 
     try {
-      const res = await fetch(webhookUrl, {
+      const res = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
-          // Nếu webhook yêu cầu auth, thêm ở đây. Ví dụ:
-          // 'Authorization': 'Bearer YOUR_TOKEN'
         },
         body: JSON.stringify({ chatInput, sessionId })
       });
@@ -85,12 +72,10 @@
 
   sendBtn.addEventListener('click', sendMessage);
 
-  saveBtn.addEventListener('click', () => {
-    const url = webhookInput.value.trim();
-    localStorage.setItem('webhookUrl', url);
-    alert('Đã lưu Webhook URL.');
-  });
+  // Settings removed as webhook URL is configured in server
 
   // Gợi ý ban đầu
-  appendMessage('bot', 'Xin chào, mình là TuaTua. Hãy nhập câu hỏi của bạn!');
+  appendMessage('bot', location.origin.includes('localhost:3000')
+    ? 'Xin chào! Đang chạy qua proxy. Hãy dùng URL mặc định /api/chat hoặc thay đổi ở trên.'
+    : 'Xin chào, mình là TuaTua. Hãy nhập câu hỏi của bạn!');
 })();
