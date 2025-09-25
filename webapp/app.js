@@ -75,5 +75,7 @@
   // Settings removed as webhook URL is configured in server
 
   // Gợi ý ban đầu
-  appendMessage('bot', 'Xin chào, mình là TuaTua. Hãy nhập câu hỏi của bạn!');
+  appendMessage('bot', location.origin.includes('localhost:3000')
+    ? 'Xin chào! Đang chạy qua proxy. Hãy dùng URL mặc định /api/chat hoặc thay đổi ở trên.'
+    : 'Xin chào, mình là TuaTua. Hãy nhập câu hỏi của bạn!');
 })();
