@@ -1,3 +1,5 @@
+import { postJson } from "../lib/api";
+
 export type Course = {
   code: string;
   title: string;
@@ -20,6 +22,17 @@ export function loadCurriculum(): Curriculum {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const data = require("../../assets/curriculum.json");
   return data as Curriculum;
+}
+
+export async function fetchServerPlan(maxCreditsPerTerm: number): Promise<SemesterPlan[] | null> {
+  try {
+    const res = await postJson("/api/learning-path", { studentId: "me", constraints: { maxCreditsPerTerm } });
+    const semesters = (res?.semesters as SemesterPlan[]) || null;
+    if (Array.isArray(semesters)) return semesters;
+  } catch {
+    // ignore
+  }
+  return null;
 }
 
 export function generatePlan(curriculum: Curriculum, opts?: { maxCreditsPerTerm?: number }): SemesterPlan[] {

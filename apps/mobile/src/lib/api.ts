@@ -1,5 +1,6 @@
 import { Platform } from "react-native";
 import Constants from "expo-constants";
+import * as SecureStore from "expo-secure-store";
 
 function getDefaultBaseUrl() {
   if (__DEV__) {
@@ -18,9 +19,12 @@ const apiBase =
 
 export async function postJson(path: string, body: any) {
   const url = path.startsWith("http") ? path : `${apiBase}${path}`;
+  const token = await SecureStore.getItemAsync("tua_token");
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
   const res = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify(body ?? {})
   });
   const ct = res.headers.get("content-type") || "";

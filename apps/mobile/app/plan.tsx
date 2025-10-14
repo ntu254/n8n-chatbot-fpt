@@ -1,11 +1,22 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
-import { generatePlan, loadCurriculum, SemesterPlan } from "../src/services/learningPath";
+import { fetchServerPlan, generatePlan, loadCurriculum, SemesterPlan } from "../src/services/learningPath";
 
 export default function PlanScreen() {
   const [maxCredits, setMaxCredits] = useState(18);
+  const [plan, setPlan] = useState<SemesterPlan[]>([]);
   const curriculum = useMemo(() => loadCurriculum(), []);
-  const plan = useMemo(() => generatePlan(curriculum, { maxCreditsPerTerm: maxCredits }), [curriculum, maxCredits]);
+
+  useEffect(() => {
+    (async () => {
+      const serverPlan = await fetchServerPlan(maxCredits);
+      if (serverPlan) {
+        setPlan(serverPlan);
+      } else {
+        setPlan(generatePlan(curriculum, { maxCreditsPerTerm: maxCredits }));
+      }
+    })();
+  }, [curriculum, maxCredits]);
 
   return (
     <View style={styles.container}>
