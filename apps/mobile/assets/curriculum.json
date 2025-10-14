@@ -1,0 +1,20 @@
+{
+  "program": "SE (Demo)",
+  "courses": [
+    { "code": "ENG101", "title": "Academic English", "credits": 3 },
+    { "code": "MATH101", "title": "Calculus I", "credits": 3 },
+    { "code": "CS101", "title": "Introduction to Programming", "credits": 3 },
+    { "code": "CS102", "title": "Object-Oriented Programming", "credits": 3, "prerequisites": ["CS101"] },
+    { "code": "MATH201", "title": "Discrete Mathematics", "credits": 3, "prerequisites": ["MATH101"] },
+    { "code": "CS201", "title": "Data Structures", "credits": 3, "prerequisites": ["CS102"] },
+    { "code": "CS202", "title": "Database Systems", "credits": 3, "prerequisites": ["CS102"] },
+    { "code": "CS203", "title": "Computer Networks", "credits": 3, "prerequisites": ["CS102"] },
+    { "code": "CS204", "title": "Operating Systems", "credits": 3, "prerequisites": ["CS201"] },
+    { "code": "CS205", "title": "Software Engineering", "credits": 3, "prerequisites": ["CS201"] },
+    { "code": "CS301", "title": "Algorithms", "credits": 3, "prerequisites": ["CS201", "MATH201"] },
+    { "code": "CS302", "title": "Web Development", "credits": 3, "prerequisites": ["CS202"] },
+    { "code": "CS303", "title": "Mobile Development", "credits": 3, "prerequisites": ["CS202"] },
+    { "code": "CS304", "title": "Machine Learning", "credits": 3, "prerequisites": ["CS301"] },
+    { "code": "CS401", "title": "Capstone Project", "credits": 6, "prerequisites": ["CS205", "CS301"] }
+  ]
+}
