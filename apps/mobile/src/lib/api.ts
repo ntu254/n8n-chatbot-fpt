@@ -1,0 +1,29 @@
+import { Platform } from "react-native";
+import Constants from "expo-constants";
+
+function getDefaultBaseUrl() {
+  if (__DEV__) {
+    // Android emulator uses 10.0.2.2 to reach host machine
+    if (Platform.OS === "android") return "http://10.0.2.2:3000";
+    return "http://localhost:3000";
+  }
+  // In production, set EXPO_PUBLIC_API_BASE_URL env or this fallback
+  return "https://your-production-domain.example";
+}
+
+const apiBase =
+  (Constants.expoConfig?.extra as any)?.apiBaseUrl?.trim() ||
+  process.env.EXPO_PUBLIC_API_BASE_URL?.trim() ||
+  getDefaultBaseUrl();
+
+export async function postJson(path: string, body: any) {
+  const url = path.startsWith("http") ? path : `${apiBase}${path}`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body ?? {})
+  });
+  const ct = res.headers.get("content-type") || "";
+  if (ct.includes("application/json")) return res.json();
+  return res.text();
+}
