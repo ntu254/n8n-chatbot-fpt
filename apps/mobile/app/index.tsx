@@ -97,7 +97,15 @@ export default function ChatScreen() {
     <View style={styles.container}>
       <View style={styles.topBar}>
         <Text style={styles.title}>TuaTua Chat</Text>
-        <Link href="/plan" style={styles.link}>Lộ trình (demo)</Link>
+        <View style={{ flexDirection: "row", gap: 12 }}>
+          <Link href="/plan" style={styles.link}>Lộ trình</Link>
+          <Link href="/term-plan" style={styles.link}>Kế hoạch kỳ</Link>
+          <Link href="/specialization" style={styles.link}>Chuyên ngành</Link>
+          <Link href="/quiz" style={styles.link}>Quiz</Link>
+          <Link href="/dashboard" style={styles.link}>Dashboard</Link>
+          <Link href="/advisor" style={styles.link}>Cố vấn</Link>
+          <Link href="/login" style={styles.link}>Đăng nhập</Link>
+        </View>
       </View>
 
       <FlatList
