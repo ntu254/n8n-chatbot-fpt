@@ -16,12 +16,42 @@ export default function LoginScreen() {
 
   const extra = (Constants.expoConfig?.extra as any) || {};
   const googleCfg = extra?.google || {};
+  
+  // Get Google Client IDs from env
+  const webClientId = googleCfg?.webClientId || process.env.EXPO_PUBLIC_GOOGLE_EXPO_CLIENT_ID;
+  const androidClientId = googleCfg?.androidClientId || process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID;
+  const iosClientId = googleCfg?.iosClientId || process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID;
+  
+  // Only request Google auth if we have at least webClientId for web platform
   const [googleRequest, googleResponse, googlePromptAsync] = Google.useAuthRequest({
-    expoClientId: googleCfg?.expoClientId || process.env.EXPO_PUBLIC_GOOGLE_EXPO_CLIENT_ID || "",
-    androidClientId: googleCfg?.androidClientId || process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID || "",
-    iosClientId: googleCfg?.iosClientId || process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || "",
+    webClientId: webClientId || undefined,
+    androidClientId: androidClientId || undefined,
+    iosClientId: iosClientId || undefined,
     scopes: ["openid", "profile", "email"]
   });
+
+  async function onSubmit() {
+    const e = email.trim();
+    const p = password.trim();
+    if (!e || !p) {
+      Alert.alert("Thiếu thông tin", "Vui lòng nhập email và mật khẩu.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await login(e, p);
+      if (res?.token) {
+        Alert.alert("Đăng nhập thành công", "Bạn đã đăng nhập.");
+        router.replace("/");
+      } else {
+        Alert.alert("Thất bại", "Không nhận được token từ server.");
+      }
+    } catch {
+      Alert.alert("Lỗi", "Không thể đăng nhập.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
     (async () => {
@@ -61,29 +91,6 @@ export default function LoginScreen() {
     })();
   }, [googleResponse]);
 
-  async function onSubmit() {
-    const e = email.trim();
-    const p = password.trim();
-    if (!e || !p) {
-      Alert.alert("Thiếu thông tin", "Vui lòng nhập email và mật khẩu.");
-      return;
-    }
-    setLoading(true);
-    try {
-      const res = await login(e, p);
-      if (res?.token) {
-        Alert.alert("Đăng nhập thành công", "Bạn đã đăng nhập.");
-        router.replace("/");
-      } else {
-        Alert.alert("Thất bại", "Không nhận được token từ server.");
-      }
-    } catch {
-      Alert.alert("Lỗi", "Không thể đăng nhập.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Đăng nhập</Text>
@@ -108,15 +115,18 @@ export default function LoginScreen() {
         <Text style={styles.btnText}>{loading ? "..." : "Đăng nhập"}</Text>
       </TouchableOpacity>
 
-      <View style={{ height: 12 }} />
-
-      <TouchableOpacity
-        style={[styles.btnGoogle, (!googleRequest || loading) && { opacity: 0.6 }]}
-        onPress={() => googlePromptAsync()}
-        disabled={!googleRequest || loading}
-      >
-        <Text style={styles.btnTextGoogle}>Đăng nhập với Google</Text>
-      </TouchableOpacity>
+      {webClientId && (
+        <>
+          <View style={{ height: 12 }} />
+          <TouchableOpacity
+            style={[styles.btnGoogle, (!googleRequest || loading) && { opacity: 0.6 }]}
+            onPress={() => googlePromptAsync()}
+            disabled={!googleRequest || loading}
+          >
+            <Text style={styles.btnTextGoogle}>Đăng nhập với Google</Text>
+          </TouchableOpacity>
+        </>
+      )}
     </View>
   );
 }
