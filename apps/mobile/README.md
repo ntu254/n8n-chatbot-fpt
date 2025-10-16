@@ -53,6 +53,14 @@ Open on devices:
 
 - Email/password screen posts to `${EXPO_PUBLIC_API_BASE_URL}/api/auth/login` and stores JWT in SecureStore.
 - Spring Boot backend implements `/api/auth/login` to issue a JWT tied to your email. Subsequent calls include `Authorization: Bearer <token>` automatically.
+- Google Login: tap "Đăng nhập với Google" on the login screen. The app uses `expo-auth-session` to obtain your Google profile (email) and then requests a JWT from `/api/auth/login`.
+  - Configure environment variables in `apps/mobile/.env`:
+    ```
+    EXPO_PUBLIC_GOOGLE_EXPO_CLIENT_ID=<web client id for Expo Go>
+    EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID=<android client id>
+    EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID=<ios client id>
+    ```
+  - For the Express dev server (`server/server.js`), a dummy password `"google"` is sent along with your email. For Spring Boot backend, the password value is ignored.
 
 ## EAS Build
 
