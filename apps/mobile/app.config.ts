@@ -1,6 +1,9 @@
 import { ExpoConfig } from "expo/config";
 
 const apiBaseUrl = process.env.EXPO_PUBLIC_API_BASE_URL || "";
+const googleExpoClientId = process.env.EXPO_PUBLIC_GOOGLE_EXPO_CLIENT_ID || "";
+const googleAndroidClientId = process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID || "";
+const googleIosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || "";
 
 const config: ExpoConfig = {
   name: "AI Adaptive Learning",
@@ -27,7 +30,12 @@ const config: ExpoConfig = {
     typedRoutes: true
   },
   extra: {
-    apiBaseUrl
+    apiBaseUrl,
+    google: {
+      expoClientId: googleExpoClientId,
+      androidClientId: googleAndroidClientId,
+      iosClientId: googleIosClientId
+    }
   }
 };
 
