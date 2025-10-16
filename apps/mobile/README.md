@@ -10,9 +10,9 @@ This is the mobile app skeleton with:
 
 - Node.js 18+
 - `npm i -g expo-cli` (optional) and/or use `npx expo`
-- The backend proxy running locally at http://localhost:3000 (or deployed). This repo already contains:
-  - server/server.js (Express proxy) → POST /api/chat forwards to N8N webhook
-  - webapp for browser demo
+- Backend available locally or deployed:
+  - Option A: server/server.js (Express proxy) → POST /api/chat forwards to N8N webhook (port 3000)
+  - Option B: apps/backend (Spring Boot) → full backend with JWT-protected /api/chat (default port 8080)
 
 ## Setup
 
@@ -27,6 +27,12 @@ Create a `.env` (or set env in your shell/CI) to configure API:
 EXPO_PUBLIC_API_BASE_URL=http://localhost:3000
 # Android emulator uses 10.0.2.2 to reach host machine
 # EXPO_PUBLIC_API_BASE_URL=http://10.0.2.2:3000
+
+# If using Spring Boot backend (default port 8080):
+# iOS simulator:
+# EXPO_PUBLIC_API_BASE_URL=http://localhost:8080
+# Android emulator:
+# EXPO_PUBLIC_API_BASE_URL=http://10.0.2.2:8080
 ```
 
 Start dev:
@@ -42,6 +48,11 @@ Open on devices:
 
 - Chat AI (default): sends `{ chatInput, sessionId }` to `${EXPO_PUBLIC_API_BASE_URL}/api/chat`
 - Learning Plan (Demo): generates semesters from `assets/curriculum.json` with prerequisite DAG + credit-cap
+
+## Auth (mobile dev)
+
+- Email/password screen posts to `${EXPO_PUBLIC_API_BASE_URL}/api/auth/login` and stores JWT in SecureStore.
+- Spring Boot backend implements `/api/auth/login` to issue a JWT tied to your email. Subsequent calls include `Authorization: Bearer <token>` automatically.
 
 ## EAS Build
 
