@@ -1,0 +1,16 @@
+server:
+  port: ${PORT:8080}
+
+app:
+  cors:
+    origin: ${CORS_ORIGIN:*}
+  n8n:
+    webhookUrl: ${N8N_WEBHOOK_URL:}
+    authHeader: ${N8N_AUTH_HEADER:}
+    authValue: ${N8N_AUTH_VALUE:}
+  dataDir: ${DATA_DIR:../server/data}
+
+spring:
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
