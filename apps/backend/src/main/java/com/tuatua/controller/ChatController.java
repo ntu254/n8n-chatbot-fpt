@@ -1,46 +1,51 @@
 package com.tuatua.controller;
 
+import com.tuatua.dto.ChatRequest;
+import com.tuatua.dto.N8nRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Map;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/chat")
 public class ChatController {
 
-    @Value("${app.n8n.webhookUrl:}")
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Value("${n8n.webhook.url}")
     private String n8nWebhookUrl;
 
-    @Value("${app.n8n.authHeader:}")
-    private String n8nAuthHeader;
-
-    @Value("${app.n8n.authValue:}")
-    private String n8nAuthValue;
-
-    private final RestTemplate http = new RestTemplate();
-
     @PostMapping
-    public ResponseEntity<?> chat(@RequestBody(required = false) Map<String, Object> payload) {
-        if (!StringUtils.hasText(n8nWebhookUrl)) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "N8N webhook URL is not configured"));
-        }
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        if (StringUtils.hasText(n8nAuthHeader) && StringUtils.hasText(n8nAuthValue)) {
-            headers.set(n8nAuthHeader, n8nAuthValue);
-        }
-        HttpEntity<Map<String, Object>> req = new HttpEntity<>(payload == null ? Map.of() : payload, headers);
-        ResponseEntity<String> upstream = http.postForEntity(n8nWebhookUrl, req, String.class);
+    public ResponseEntity<String> chatWithBot(@RequestBody ChatRequest chatRequest, Principal principal) {
+        // `Principal principal` được Spring Security tự động tiêm vào
+        // nếu người dùng đã xác thực thành công qua JWT.
+        // principal.getName() thường sẽ là username (email trong trường hợp của chúng ta).
 
-        MediaType contentType = upstream.getHeaders().getContentType();
-        if (contentType != null && contentType.includes(MediaType.APPLICATION_JSON)) {
-            return ResponseEntity.status(upstream.getStatusCode()).contentType(MediaType.APPLICATION_JSON).body(upstream.getBody());
+        // Tạo sessionId ổn định dựa trên người dùng đã đăng nhập.
+        // Điều này giúp n8n duy trì ngữ cảnh cho từng người dùng riêng biệt[cite: 53].
+        String sessionId = "user-session-" + principal.getName();
+
+        // Chuẩn bị request để gửi đến n8n.
+        N8nRequest n8nRequest = new N8nRequest(chatRequest.getChatInput(), sessionId);
+
+        try {
+            // Gọi đến webhook của n8n và chuyển tiếp request[cite: 54, 130].
+            ResponseEntity<String> n8nResponse = restTemplate.postForEntity(n8nWebhookUrl, n8nRequest, String.class);
+
+            // Trả response của n8n về thẳng cho frontend.
+            return ResponseEntity.ok(n8nResponse.getBody());
+        } catch (Exception e) {
+            // Xử lý lỗi nếu không gọi được n8n
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Error connecting to the AI service.");
         }
-        return ResponseEntity.status(upstream.getStatusCode()).contentType(MediaType.TEXT_PLAIN).body(upstream.getBody());
     }
 }
