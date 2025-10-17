@@ -39,11 +39,17 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtPassthroughFilter(), BasicAuthenticationFilter.class);
+                .addFilterBefore(new JwtPassthroughFilter(corsOrigin), BasicAuthenticationFilter.class);
         return http.build();
     }
 
     static class JwtPassthroughFilter extends OncePerRequestFilter {
+        private final String corsOrigin;
+
+        public JwtPassthroughFilter(String corsOrigin) {
+            this.corsOrigin = corsOrigin;
+        }
+
         @Override
         protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
                 throws ServletException, IOException {

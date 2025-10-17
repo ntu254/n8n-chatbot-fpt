@@ -1,0 +1,7 @@
+com\tuatua\config\SecurityConfig.class
+com\tuatua\controller\AuthController.class
+com\tuatua\controller\ChatController.class
+com\tuatua\controller\AuthController$LoginRequest.class
+com\tuatua\config\SecurityConfig$JwtPassthroughFilter$1.class
+com\tuatua\config\SecurityConfig$JwtPassthroughFilter.class
+com\tuatua\MobileBackendApplication.class
