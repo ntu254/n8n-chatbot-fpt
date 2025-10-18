@@ -24,7 +24,7 @@ public class ApplicationConfig {
                     // Nếu tìm thấy, chuyển đổi Student thành đối tượng UserDetails
                     .map(student -> new User(
                             student.getEmail(),
-                            "", // Password không cần thiết vì ta dùng Google Login
+                            student.getPassword(),
                             Collections.emptyList() // Authorities/Roles, tạm thời để trống
                     ))
                     // Nếu không tìm thấy, ném ra exception chuẩn của Spring Security
