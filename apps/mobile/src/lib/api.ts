@@ -5,8 +5,8 @@ import * as SecureStore from "expo-secure-store";
 function getDefaultBaseUrl() {
   if (__DEV__) {
     // Android emulator uses 10.0.2.2 to reach host machine
-    if (Platform.OS === "android") return "http://10.0.2.2:3000";
-    return "http://localhost:3000";
+    if (Platform.OS === "android") return "http://10.0.2.2:8080";
+    return "http://localhost:8080";
   }
   // In production, set EXPO_PUBLIC_API_BASE_URL env or this fallback
   return "https://your-production-domain.example";

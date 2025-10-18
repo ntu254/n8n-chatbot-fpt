@@ -120,7 +120,16 @@ export default function LoginScreen() {
           <View style={{ height: 12 }} />
           <TouchableOpacity
             style={[styles.btnGoogle, (!googleRequest || loading) && { opacity: 0.6 }]}
-            onPress={() => googlePromptAsync()}
+            onPress={async () => {
+              try {
+                if (googleRequest) {
+                  await googlePromptAsync();
+                }
+              } catch (err) {
+                console.error("Google auth error:", err);
+                Alert.alert("Lỗi", "Không thể mở Google login trên web. Vui lòng dùng email/password.");
+              }
+            }}
             disabled={!googleRequest || loading}
           >
             <Text style={styles.btnTextGoogle}>Đăng nhập với Google</Text>
