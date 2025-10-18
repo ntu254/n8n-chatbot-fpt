@@ -12,4 +12,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     // Spring Data JPA sẽ tự động tạo câu query dựa trên tên phương thức
     // Ví dụ: tìm sinh viên bằng email
     Optional<Student> findByEmail(String email);
+
+    Optional<Student> findByVerificationToken(String token);
 }
