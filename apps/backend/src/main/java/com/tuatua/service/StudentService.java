@@ -27,6 +27,31 @@ public class StudentService {
     }
 
     /**
+     * Tạo và gửi lại token xác thực cho một email đã đăng ký nhưng chưa kích hoạt.
+     * @param email Email của người dùng.
+     * @return Đối tượng Student đã được cập nhật token.
+     * @throws IllegalStateException nếu tài khoản không tồn tại hoặc đã được kích hoạt.
+     */
+    public Student resendVerificationToken(String email) {
+        // Tìm sinh viên theo email
+        Student student = studentRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("Không tìm thấy tài khoản với email này."));
+
+        // Kiểm tra xem tài khoản đã được kích hoạt chưa
+        if (student.isEnabled()) {
+            throw new IllegalStateException("Tài khoản này đã được xác thực.");
+        }
+
+        // Tạo token mới và cập nhật thời gian hết hạn
+        String newToken = UUID.randomUUID().toString();
+        student.setVerificationToken(newToken);
+        student.setTokenExpiryDate(LocalDateTime.now().plusMinutes(30));
+
+        // Lưu lại vào database
+        return studentRepository.save(student);
+    }
+
+    /**
      * Kiểm tra email đã tồn tại và đăng ký một người dùng mới.
      * @param registerRequest Thông tin đăng ký từ DTO.
      * @return Đối tượng Student đã được tạo.
@@ -47,7 +72,7 @@ public class StudentService {
         String token = UUID.randomUUID().toString();
         student.setVerificationToken(token);
         // Đặt thời gian hết hạn là 60 giây kể từ bây giờ
-        student.setTokenExpiryDate(LocalDateTime.now().plusSeconds(60));
+        student.setTokenExpiryDate(LocalDateTime.now().plusSeconds(30));
 
         return studentRepository.save(student);
     }
