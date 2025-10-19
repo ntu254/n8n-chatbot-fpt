@@ -62,4 +62,8 @@ public class Student {
         LOCAL,
         GOOGLE
     }
+
+    //dùng để forgot password
+    private String passwordResetCode;
+    private LocalDateTime resetCodeExpiryDate;
 }

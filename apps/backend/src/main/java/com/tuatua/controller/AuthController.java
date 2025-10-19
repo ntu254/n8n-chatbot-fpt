@@ -1,14 +1,12 @@
 package com.tuatua.controller;
 
-import com.tuatua.dto.GoogleLoginRequest;
-import com.tuatua.dto.LoginRequest;
-import com.tuatua.dto.LoginResponse;
-import com.tuatua.dto.RegisterRequest;
+import com.tuatua.dto.*;
 import com.tuatua.entity.Student;
 import com.tuatua.service.EmailService;
 import com.tuatua.service.GoogleAuthService;
 import com.tuatua.service.JwtService;
 import com.tuatua.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,7 +40,51 @@ public class AuthController {
     @Autowired
     private JwtService jwtService;
 
-    //phần đăng ký người dùng
+    /**
+     * Endpoint để yêu cầu mã reset mật khẩu.
+     */
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody @Valid ForgotPasswordRequest request) {
+        try {
+            String resetCode = studentService.generatePasswordResetCode(request.getEmail());
+            emailService.sendPasswordResetEmail(request.getEmail(), resetCode);
+            return ResponseEntity.ok("Mã đặt lại mật khẩu đã được gửi đến email của bạn.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    /**
+     * Endpoint để đặt lại mật khẩu mới.
+     */
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
+        try {
+            studentService.resetPassword(request);
+            return ResponseEntity.ok("Đặt lại mật khẩu thành công! Bây giờ bạn có thể đăng nhập bằng mật khẩu mới.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    /**
+     * Endpoint để người dùng yêu cầu gửi lại email xác thực.
+     */
+    @PostMapping("/resend-verification")
+    public ResponseEntity<?> resendVerification(@RequestBody @Valid ResendTokenRequest request) {
+        try {
+            Student updatedStudent = studentService.resendVerificationToken(request.getEmail());
+            emailService.sendVerificationEmail(updatedStudent.getEmail(), updatedStudent.getVerificationToken());
+            return ResponseEntity.ok("Một email xác thực mới đã được gửi. Vui lòng kiểm tra hòm thư của bạn.");
+        } catch (IllegalStateException e) {
+            // Trả về lỗi nếu email không tồn tại hoặc tài khoản đã được kích hoạt
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    /**
+     * Endpoint để người dùng đăng ký tài khoản mới
+     */
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {
         try {
@@ -54,7 +96,11 @@ public class AuthController {
         }
     }
 
-    //xác nhận việc đăng ký của người dùng bằng cách gửi mail
+
+    /**
+     * Endpoint xác nhận việc đăng ký của người dùng bằng cách gửi mail
+     */
+
     @GetMapping("/verify")
     public ResponseEntity<?> verifyAccount(@RequestParam("token") String token) {
         Optional<Student> studentOpt = studentService.verifyStudent(token);
@@ -89,7 +135,9 @@ public class AuthController {
     }
      */
 
-    //đăng nhập account local
+    /**
+     * Endpoint đăng nhập bằng account local
+     */
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
         Optional<Student> studentOpt = studentService.findByEmail(loginRequest.getEmail());
@@ -110,7 +158,9 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    //đăng nhập google
+    /**
+     * Endpoint đăng nhập bằng google
+     */
     @PostMapping("/google")
     public ResponseEntity<?> loginWithGoogle(@RequestBody GoogleLoginRequest request) {
         try {

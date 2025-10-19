@@ -1,6 +1,7 @@
 package com.tuatua.service;
 
 import com.tuatua.dto.RegisterRequest;
+import com.tuatua.dto.ResetPasswordRequest;
 import com.tuatua.entity.Student;
 import com.tuatua.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +26,79 @@ public class StudentService {
     public StudentService(StudentRepository studentRepository, PasswordEncoder passwordEncoder) {
         this.studentRepository = studentRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    /**
+     * Tạo mã reset mật khẩu cho người dùng.
+     * @param email Email của người dùng.
+     * @return Mã reset đã được tạo.
+     * @throws IllegalStateException nếu email không tồn tại hoặc tài khoản là tài khoản Google.
+     */
+    public String generatePasswordResetCode(String email) {
+        Student student = studentRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("Không tìm thấy tài khoản với email này."));
+
+        if (student.getProvider() != Student.AuthProvider.LOCAL) {
+            throw new IllegalStateException("Không thể đặt lại mật khẩu cho tài khoản đăng nhập bằng Google.");
+        }
+
+        // Tạo mã ngẫu nhiên 6 chữ số
+        String code = String.format("%06d", new SecureRandom().nextInt(999999));
+
+        student.setPasswordResetCode(code);
+        student.setResetCodeExpiryDate(LocalDateTime.now().plusMinutes(10)); // Hết hạn sau 10 phút
+        studentRepository.save(student);
+
+        return code;
+    }
+
+    /**
+     * Đặt lại mật khẩu cho người dùng nếu mã reset hợp lệ.
+     * @param request DTO chứa email, mã, và mật khẩu mới.
+     * @throws IllegalStateException nếu thông tin không hợp lệ.
+     */
+    public void resetPassword(ResetPasswordRequest request) {
+        Student student = studentRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new IllegalStateException("Email không hợp lệ."));
+
+        if (student.getPasswordResetCode() == null || !student.getPasswordResetCode().equals(request.getCode())) {
+            throw new IllegalStateException("Mã xác thực không chính xác.");
+        }
+
+        if (student.getResetCodeExpiryDate().isBefore(LocalDateTime.now())) {
+            throw new IllegalStateException("Mã xác thực đã hết hạn.");
+        }
+
+        student.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        // Dọn dẹp các trường reset
+        student.setPasswordResetCode(null);
+        student.setResetCodeExpiryDate(null);
+        studentRepository.save(student);
+    }
+
+    /**
+     * Tạo và gửi lại token xác thực cho một email đã đăng ký nhưng chưa kích hoạt.
+     * @param email Email của người dùng.
+     * @return Đối tượng Student đã được cập nhật token.
+     * @throws IllegalStateException nếu tài khoản không tồn tại hoặc đã được kích hoạt.
+     */
+    public Student resendVerificationToken(String email) {
+        // Tìm sinh viên theo email
+        Student student = studentRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("Không tìm thấy tài khoản với email này."));
+
+        // Kiểm tra xem tài khoản đã được kích hoạt chưa
+        if (student.isEnabled()) {
+            throw new IllegalStateException("Tài khoản này đã được xác thực.");
+        }
+
+        // Tạo token mới và cập nhật thời gian hết hạn
+        String newToken = UUID.randomUUID().toString();
+        student.setVerificationToken(newToken);
+        student.setTokenExpiryDate(LocalDateTime.now().plusMinutes(30));
+
+        // Lưu lại vào database
+        return studentRepository.save(student);
     }
 
     /**
@@ -46,8 +121,8 @@ public class StudentService {
 
         String token = UUID.randomUUID().toString();
         student.setVerificationToken(token);
-        // Đặt thời gian hết hạn là 60 giây kể từ bây giờ
-        student.setTokenExpiryDate(LocalDateTime.now().plusSeconds(60));
+        // Đặt thời gian hết hạn là 30 phút kể từ bây giờ
+        student.setTokenExpiryDate(LocalDateTime.now().plusMinutes(30));
 
         return studentRepository.save(student);
     }
