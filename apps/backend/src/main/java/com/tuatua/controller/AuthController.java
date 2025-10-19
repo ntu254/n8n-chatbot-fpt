@@ -1,14 +1,12 @@
 package com.tuatua.controller;
 
-import com.tuatua.dto.GoogleLoginRequest;
-import com.tuatua.dto.LoginRequest;
-import com.tuatua.dto.LoginResponse;
-import com.tuatua.dto.RegisterRequest;
+import com.tuatua.dto.*;
 import com.tuatua.entity.Student;
 import com.tuatua.service.EmailService;
 import com.tuatua.service.GoogleAuthService;
 import com.tuatua.service.JwtService;
 import com.tuatua.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,6 +40,21 @@ public class AuthController {
     @Autowired
     private JwtService jwtService;
 
+    /**
+     * Endpoint để người dùng yêu cầu gửi lại email xác thực.
+     */
+    @PostMapping("/resend-verification")
+    public ResponseEntity<?> resendVerification(@RequestBody @Valid ResendTokenRequest request) {
+        try {
+            Student updatedStudent = studentService.resendVerificationToken(request.getEmail());
+            emailService.sendVerificationEmail(updatedStudent.getEmail(), updatedStudent.getVerificationToken());
+            return ResponseEntity.ok("Một email xác thực mới đã được gửi. Vui lòng kiểm tra hòm thư của bạn.");
+        } catch (IllegalStateException e) {
+            // Trả về lỗi nếu email không tồn tại hoặc tài khoản đã được kích hoạt
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     //phần đăng ký người dùng
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {
@@ -53,6 +66,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 
     //xác nhận việc đăng ký của người dùng bằng cách gửi mail
     @GetMapping("/verify")
