@@ -41,6 +41,36 @@ public class AuthController {
     private JwtService jwtService;
 
     /**
+<<<<<<< HEAD
+=======
+     * Endpoint để yêu cầu mã reset mật khẩu.
+     */
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody @Valid ForgotPasswordRequest request) {
+        try {
+            String resetCode = studentService.generatePasswordResetCode(request.getEmail());
+            emailService.sendPasswordResetEmail(request.getEmail(), resetCode);
+            return ResponseEntity.ok("Mã đặt lại mật khẩu đã được gửi đến email của bạn.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    /**
+     * Endpoint để đặt lại mật khẩu mới.
+     */
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
+        try {
+            studentService.resetPassword(request);
+            return ResponseEntity.ok("Đặt lại mật khẩu thành công! Bây giờ bạn có thể đăng nhập bằng mật khẩu mới.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    /**
+>>>>>>> khoi/fear/forgot-password
      * Endpoint để người dùng yêu cầu gửi lại email xác thực.
      */
     @PostMapping("/resend-verification")
@@ -55,7 +85,13 @@ public class AuthController {
         }
     }
 
+<<<<<<< HEAD
     //phần đăng ký người dùng
+=======
+    /**
+     * Endpoint để người dùng đăng ký tài khoản mới
+     */
+>>>>>>> khoi/fear/forgot-password
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {
         try {
@@ -68,7 +104,14 @@ public class AuthController {
     }
 
 
+<<<<<<< HEAD
     //xác nhận việc đăng ký của người dùng bằng cách gửi mail
+=======
+    /**
+     * Endpoint xác nhận việc đăng ký của người dùng bằng cách gửi mail
+     */
+
+>>>>>>> khoi/fear/forgot-password
     @GetMapping("/verify")
     public ResponseEntity<?> verifyAccount(@RequestParam("token") String token) {
         Optional<Student> studentOpt = studentService.verifyStudent(token);
@@ -103,7 +146,9 @@ public class AuthController {
     }
      */
 
-    //đăng nhập account local
+    /**
+     * Endpoint đăng nhập bằng account local
+     */
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
         Optional<Student> studentOpt = studentService.findByEmail(loginRequest.getEmail());
@@ -124,7 +169,9 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    //đăng nhập google
+    /**
+     * Endpoint đăng nhập bằng google
+     */
     @PostMapping("/google")
     public ResponseEntity<?> loginWithGoogle(@RequestBody GoogleLoginRequest request) {
         try {
