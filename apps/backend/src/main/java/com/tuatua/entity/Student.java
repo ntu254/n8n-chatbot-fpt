@@ -44,14 +44,12 @@ public class Student {
     private String riskLevel;
 
     @Column
-    private String password; // Lưu mật khẩu đã được mã hóa
 
     @Column(nullable = false)
     private boolean enabled = false; // Mặc định là false cho đến khi xác thực
 
     private String verificationToken;
 
-    private LocalDateTime tokenExpiryDate; // <-- THÊM DÒNG NÀY
 
     // Thêm một trường để phân biệt người dùng đăng ký thông thường và Google
     @Enumerated(EnumType.STRING)
