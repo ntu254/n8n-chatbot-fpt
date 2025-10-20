@@ -41,8 +41,6 @@ public class AuthController {
     private JwtService jwtService;
 
     /**
-<<<<<<< HEAD
-=======
      * Endpoint để yêu cầu mã reset mật khẩu.
      */
     @PostMapping("/forgot-password")
@@ -70,7 +68,6 @@ public class AuthController {
     }
 
     /**
->>>>>>> khoi/fear/forgot-password
      * Endpoint để người dùng yêu cầu gửi lại email xác thực.
      */
     @PostMapping("/resend-verification")
@@ -85,13 +82,9 @@ public class AuthController {
         }
     }
 
-<<<<<<< HEAD
-    //phần đăng ký người dùng
-=======
     /**
      * Endpoint để người dùng đăng ký tài khoản mới
      */
->>>>>>> khoi/fear/forgot-password
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {
         try {
@@ -104,14 +97,10 @@ public class AuthController {
     }
 
 
-<<<<<<< HEAD
-    //xác nhận việc đăng ký của người dùng bằng cách gửi mail
-=======
     /**
      * Endpoint xác nhận việc đăng ký của người dùng bằng cách gửi mail
      */
 
->>>>>>> khoi/fear/forgot-password
     @GetMapping("/verify")
     public ResponseEntity<?> verifyAccount(@RequestParam("token") String token) {
         Optional<Student> studentOpt = studentService.verifyStudent(token);

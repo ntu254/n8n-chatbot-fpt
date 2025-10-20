@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import jakarta.annotation.PostConstruct;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,8 +22,22 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    @Value("${jwt.secret}")
+    // Allow empty so app can start even if property missing; we'll resolve/fail gracefully in @PostConstruct
+    @Value("${jwt.secret:}")
     private String SECRET_KEY;
+
+    @PostConstruct
+    private void initSecret() {
+        if (SECRET_KEY == null || SECRET_KEY.isBlank()) {
+            String env = System.getenv("JWT_SECRET");
+            if (env != null && !env.isBlank()) {
+                SECRET_KEY = env;
+            }
+        }
+        if (SECRET_KEY == null || SECRET_KEY.isBlank()) {
+            throw new IllegalStateException("JWT secret is not configured. Please set 'jwt.secret' in application.properties or define environment variable JWT_SECRET.");
+        }
+    }
 
     // Tạo JWT từ thông tin người dùng (Student)
     public String generateToken(Student student) {
@@ -39,12 +56,19 @@ public class JwtService {
 
     // Lấy signing key từ secret key
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes;
+        try {
+            // Try Base64 first (common practice for JWT secrets)
+            keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        } catch (IllegalArgumentException e) {
+            // Fallback to raw UTF-8 bytes if not Base64
+            keyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
+        }
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
     // Trích xuất một claim cụ thể từ token
-    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    private <T> T extractClaim(String token, java.util.function.Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }

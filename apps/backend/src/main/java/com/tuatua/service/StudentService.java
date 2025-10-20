@@ -124,13 +124,8 @@ public class StudentService {
 
         String token = UUID.randomUUID().toString();
         student.setVerificationToken(token);
-<<<<<<< HEAD
-        // Đặt thời gian hết hạn là 60 giây kể từ bây giờ
-        student.setTokenExpiryDate(LocalDateTime.now().plusSeconds(30));
-=======
         // Đặt thời gian hết hạn là 30 phút kể từ bây giờ
         student.setTokenExpiryDate(LocalDateTime.now().plusMinutes(30));
->>>>>>> khoi/fear/forgot-password
 
         return studentRepository.save(student);
     }
