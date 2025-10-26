@@ -1,51 +1,55 @@
 package com.tuatua.controller;
 
 import com.tuatua.dto.ChatRequest;
-import com.tuatua.dto.N8nRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import com.tuatua.entity.ChatMessage;
+import com.tuatua.service.ChatService; // Import service mới
+import lombok.RequiredArgsConstructor; // Sử dụng constructor injection
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.security.core.Authentication; // Sử dụng Authentication thay vì Principal
+import org.springframework.web.bind.annotation.*; // Thêm GetMapping
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/chat")
+@RequiredArgsConstructor // Dùng constructor injection
 public class ChatController {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final ChatService chatService; // Tiêm ChatService
+    // Xóa RestTemplate và @Value n8nWebhookUrl ở đây
 
-    @Value("${n8n.webhook.url}")
-    private String n8nWebhookUrl;
-
+    /**
+     * Endpoint để gửi tin nhắn mới đến bot.
+     */
     @PostMapping
-    public ResponseEntity<String> chatWithBot(@RequestBody ChatRequest chatRequest, Principal principal) {
-        // `Principal principal` được Spring Security tự động tiêm vào
-        // nếu người dùng đã xác thực thành công qua JWT.
-        // principal.getName() thường sẽ là username (email trong trường hợp của chúng ta).
-
-        // Tạo sessionId ổn định dựa trên người dùng đã đăng nhập.
-        // Điều này giúp n8n duy trì ngữ cảnh cho từng người dùng riêng biệt[cite: 53].
-        String sessionId = "user-session-" + principal.getName();
-
-        // Chuẩn bị request để gửi đến n8n.
-        N8nRequest n8nRequest = new N8nRequest(chatRequest.getChatInput(), sessionId);
+    public ResponseEntity<?> chatWithBot(@RequestBody ChatRequest chatRequest, Authentication authentication) {
+        // Lấy email của người dùng đã xác thực từ đối tượng Authentication
+        String userEmail = authentication.getName();
 
         try {
-            // Gọi đến webhook của n8n và chuyển tiếp request[cite: 54, 130].
-            ResponseEntity<String> n8nResponse = restTemplate.postForEntity(n8nWebhookUrl, n8nRequest, String.class);
-
-            // Trả response của n8n về thẳng cho frontend.
-            return ResponseEntity.ok(n8nResponse.getBody());
+            // Gọi ChatService để xử lý
+            String botResponse = chatService.processUserMessage(userEmail, chatRequest);
+            // Trả về phản hồi của bot
+            return ResponseEntity.ok(botResponse);
         } catch (Exception e) {
-            // Xử lý lỗi nếu không gọi được n8n
             e.printStackTrace();
-            return ResponseEntity.internalServerError().body("Error connecting to the AI service.");
+            return ResponseEntity.internalServerError().body("Error processing chat message: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Endpoint để lấy lịch sử chat của người dùng hiện tại.
+     */
+    @GetMapping("/history")
+    public ResponseEntity<List<ChatMessage>> getChatHistory(Authentication authentication) {
+        String userEmail = authentication.getName();
+        try {
+            List<ChatMessage> history = chatService.getChatHistory(userEmail);
+            return ResponseEntity.ok(history);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(null); // Hoặc trả về lỗi cụ thể hơn
         }
     }
 }
