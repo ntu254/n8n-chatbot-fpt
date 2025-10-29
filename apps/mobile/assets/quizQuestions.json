@@ -1,0 +1,190 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "Bạn thích hoạt động nào nhất trong thời gian rảnh?",
+      "choices": [
+        {
+          "text": "Lập trình và tạo ra các ứng dụng",
+          "weight": {
+            "cntt": 3,
+            "ktmt": 2,
+            "httt": 2
+          }
+        },
+        {
+          "text": "Thiết kế đồ họa và sáng tạo nội dung",
+          "weight": {
+            "tkdh": 3,
+            "cntt": 1,
+            "qtdn": 1
+          }
+        },
+        {
+          "text": "Phân tích dữ liệu và số liệu",
+          "weight": {
+            "httt": 3,
+            "ktkt": 2,
+            "cntt": 2
+          }
+        },
+        {
+          "text": "Quản lý và tổ chức công việc",
+          "weight": {
+            "qtdn": 3,
+            "tcnh": 2,
+            "httt": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "question": "Môn học nào bạn cảm thấy hứng thú nhất?",
+      "choices": [
+        {
+          "text": "Toán học và Giải tích",
+          "weight": {
+            "ktmt": 3,
+            "cntt": 2,
+            "ktkt": 2
+          }
+        },
+        {
+          "text": "Vật lý và Kỹ thuật",
+          "weight": {
+            "ktmt": 3,
+            "ktkt": 3,
+            "cntt": 1
+          }
+        },
+        {
+          "text": "Kinh tế và Quản trị",
+          "weight": {
+            "qtdn": 3,
+            "tcnh": 2,
+            "httt": 1
+          }
+        },
+        {
+          "text": "Nghệ thuật và Thiết kế",
+          "weight": {
+            "tkdh": 3,
+            "cntt": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "question": "Bạn muốn làm việc trong môi trường như thế nào?",
+      "choices": [
+        {
+          "text": "Văn phòng công ty công nghệ",
+          "weight": {
+            "cntt": 3,
+            "httt": 2,
+            "ktmt": 1
+          }
+        },
+        {
+          "text": "Xưởng sản xuất và nhà máy",
+          "weight": {
+            "ktmt": 3,
+            "ktkt": 3,
+            "cntt": 0
+          }
+        },
+        {
+          "text": "Studio thiết kế sáng tạo",
+          "weight": {
+            "tkdh": 3,
+            "cntt": 1
+          }
+        },
+        {
+          "text": "Văn phòng quản lý và kinh doanh",
+          "weight": {
+            "qtdn": 3,
+            "tcnh": 2,
+            "httt": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "question": "Kỹ năng nào bạn tự tin nhất?",
+      "choices": [
+        {
+          "text": "Tư duy logic và giải quyết vấn đề",
+          "weight": {
+            "cntt": 3,
+            "ktmt": 2,
+            "httt": 2
+          }
+        },
+        {
+          "text": "Sáng tạo và thẩm mỹ",
+          "weight": {
+            "tkdh": 3,
+            "qtdn": 1
+          }
+        },
+        {
+          "text": "Lãnh đạo và giao tiếp",
+          "weight": {
+            "qtdn": 3,
+            "tcnh": 2,
+            "httt": 1
+          }
+        },
+        {
+          "text": "Phân tích và tính toán",
+          "weight": {
+            "ktkt": 3,
+            "httt": 3,
+            "ktmt": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "question": "Bạn muốn tập trung vào lĩnh vực nào sau khi tốt nghiệp?",
+      "choices": [
+        {
+          "text": "Phát triển phần mềm và ứng dụng",
+          "weight": {
+            "cntt": 3,
+            "httt": 1
+          }
+        },
+        {
+          "text": "Thiết kế sản phẩm và hệ thống",
+          "weight": {
+            "ktmt": 3,
+            "tkdh": 2,
+            "ktkt": 2
+          }
+        },
+        {
+          "text": "Quản lý dự án và kinh doanh",
+          "weight": {
+            "qtdn": 3,
+            "tcnh": 2,
+            "httt": 1
+          }
+        },
+        {
+          "text": "Nghiên cứu và phát triển công nghệ",
+          "weight": {
+            "ktmt": 2,
+            "cntt": 2,
+            "ktkt": 2
+          }
+        }
+      ]
+    }
+  ]
+}

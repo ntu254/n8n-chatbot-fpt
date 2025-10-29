@@ -43,7 +43,7 @@ export default function TermPlanScreen() {
           );
         }}
       />
-      {totalCredits > 20 && <Text style={styles.warnText}>Cảnh báo: quá tải tín chỉ (>{20})</Text>}
+      {totalCredits > 20 && <Text style={styles.warnText}>Cảnh báo: quá tải tín chỉ (&gt;{20})</Text>}
     </View>
   );
 }

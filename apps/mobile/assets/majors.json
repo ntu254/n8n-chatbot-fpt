@@ -1,0 +1,109 @@
+{
+  "majors": [
+    {
+      "id": "cntt",
+      "name": "Công nghệ thông tin",
+      "description": "Phát triển phần mềm, ứng dụng web/mobile, quản lý hệ thống",
+      "salary": "15-50 triệu VNĐ/tháng",
+      "jobMarket": "Rất cao - Luôn thiếu nguồn nhân lực",
+      "skills": ["Lập trình", "Tư duy logic", "Giải quyết vấn đề", "Học hỏi liên tục"],
+      "careerPaths": [
+        "Lập trình viên Frontend/Backend",
+        "Mobile Developer",
+        "DevOps Engineer",
+        "Product Manager",
+        "Technical Lead"
+      ]
+    },
+    {
+      "id": "ktmt",
+      "name": "Kỹ thuật máy tính",
+      "description": "Thiết kế phần cứng, hệ thống nhúng, kiến trúc máy tính",
+      "salary": "12-45 triệu VNĐ/tháng",
+      "jobMarket": "Cao - Nhu cầu lớn từ các công ty công nghệ",
+      "skills": ["Thiết kế phần cứng", "Lập trình hệ thống", "Toán học", "Vật lý"],
+      "careerPaths": [
+        "Hardware Engineer",
+        "Embedded Systems Developer",
+        "System Architect",
+        "IoT Developer",
+        "R&D Engineer"
+      ]
+    },
+    {
+      "id": "httt",
+      "name": "Hệ thống thông tin",
+      "description": "Quản lý và phân tích dữ liệu, thiết kế hệ thống thông tin doanh nghiệp",
+      "salary": "10-40 triệu VNĐ/tháng",
+      "jobMarket": "Tốt - Nhu cầu ổn định từ các doanh nghiệp",
+      "skills": ["Phân tích dữ liệu", "Quản lý hệ thống", "Business Analysis", "Database"],
+      "careerPaths": [
+        "Business Analyst",
+        "Data Analyst",
+        "System Administrator",
+        "IT Consultant",
+        "Project Manager"
+      ]
+    },
+    {
+      "id": "tkdh",
+      "name": "Thiết kế đồ họa",
+      "description": "Sáng tạo nội dung thị giác, thiết kế UI/UX, branding",
+      "salary": "8-35 triệu VNĐ/tháng",
+      "jobMarket": "Trung bình - Cạnh tranh cao, cần portfolio mạnh",
+      "skills": ["Sáng tạo", "Thẩm mỹ", "Phần mềm thiết kế", "Communication"],
+      "careerPaths": [
+        "Graphic Designer",
+        "UI/UX Designer",
+        "Brand Designer",
+        "Illustrator",
+        "Creative Director"
+      ]
+    },
+    {
+      "id": "qtdn",
+      "name": "Quản trị doanh nghiệp",
+      "description": "Quản lý vận hành, chiến lược kinh doanh, phát triển tổ chức",
+      "salary": "10-60 triệu VNĐ/tháng",
+      "jobMarket": "Tốt - Luôn có nhu cầu từ mọi ngành",
+      "skills": ["Lãnh đạo", "Giao tiếp", "Phân tích", "Quản lý thời gian"],
+      "careerPaths": [
+        "Business Manager",
+        "Operations Manager",
+        "Sales Manager",
+        "HR Manager",
+        "CEO/Entrepreneur"
+      ]
+    },
+    {
+      "id": "tcnh",
+      "name": "Tài chính ngân hàng",
+      "description": "Quản lý tài chính, đầu tư, phân tích rủi ro, dịch vụ ngân hàng",
+      "salary": "12-50 triệu VNĐ/tháng",
+      "jobMarket": "Tốt - Ngành ổn định với nhiều cơ hội",
+      "skills": ["Phân tích tài chính", "Quản lý rủi ro", "Kiến thức pháp lý", "Đàm phán"],
+      "careerPaths": [
+        "Financial Analyst",
+        "Investment Advisor",
+        "Bank Manager",
+        "Risk Manager",
+        "Financial Controller"
+      ]
+    },
+    {
+      "id": "ktkt",
+      "name": "Kỹ thuật kinh tế",
+      "description": "Kết hợp kỹ thuật và kinh tế, quản lý dự án, phân tích đầu tư",
+      "salary": "10-45 triệu VNĐ/tháng",
+      "jobMarket": "Tốt - Vị trí đa năng được nhiều ngành cần",
+      "skills": ["Phân tích kinh tế", "Quản lý dự án", "Kỹ thuật cơ bản", "Tính toán"],
+      "careerPaths": [
+        "Project Manager",
+        "Economic Analyst",
+        "Investment Analyst",
+        "Technical Consultant",
+        "Business Development"
+      ]
+    }
+  ]
+}

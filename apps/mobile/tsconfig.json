@@ -9,7 +9,8 @@
     ],
     "jsx": "react-jsx",
     "noEmit": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
       "@src/*": [
